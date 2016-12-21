@@ -103,3 +103,46 @@ var b=0;
    },1000)
  }
  timer()
+ //====================================
+//Rotate
+//=====================================
+ $('html').keydown(function(x){
+   if(x.keyCode===38){
+     tshape = transpose(tshape)
+     console.log(tshape)
+   }
+ })
+console.log(tshape);
+ function transpose(tshape){
+   var newArray = []
+   for(var i = 0; i < tshape.length; i++){
+        newArray.push([]);
+    };
+
+    for(var i = 0; i < tshape.length; i++){
+        for(var j = 0; j < tshape[i].length; j++){
+            newArray[j].push(tshape[i][j]);
+        };
+    };
+     for(var i = 0; i < tshape.length; i++){
+       var temp=newArray[i][0]
+       newArray[i][0]=newArray[i][2]
+       newArray[i][2]=temp;
+     };
+
+    return(newArray);
+}
+
+ function angleCalc(){
+   var angle1 = $('.t').css('-webkit-transform')
+   console.log(angle1);
+   if(angle1 !== 'none') {
+     var values = angle1.split('(')[1].split(')')[0].split(',');
+     var a = values[0];
+     var b = values[1];
+     return angle = Math.round(Math.atan2(b, a) * (180/Math.PI));
+   }
+   else{
+     return angle=0;
+   }
+ }
