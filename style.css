@@ -1,0 +1,17 @@
+.t{
+  position: absolute;
+  width: 80px;
+  height: 60px;
+  display: inline;
+  }
+.tbox{
+  border-radius: 5px;
+}
+.boardelem{
+  width: 20px;
+  height: 20px;
+  background: grey;
+  display: inline-block;
+  text-align: center;
+  margin-top: 10px;
+}
