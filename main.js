@@ -34,11 +34,11 @@ var counter = [];
 
  function timer(){
    timeout =  setInterval(function(){
-     if((a+1)!==18){
+     if(!((a+selected_shape.length)>20)){
        for(var j=selected_shape.length-1;j>=0;j--){
          var i=selected_shape.length-1;
          if(($('#'+(a+i+1)+'_'+(b+j)).html())==='0' && ($('#'+(a+i)+'_'+(b+j)).html())==='0'){
-           console.log('entered');
+           //console.log('entered');
            counter.push(true)
          }
          else if((($('#'+(a+i+1)+'_'+(b+j)).html())==='1' && ($('#'+(a+i)+'_'+(b+j)).html())==='0')){
@@ -51,7 +51,7 @@ var counter = [];
            counter.push(false)
          }
        }
-       console.log(counter);
+       //console.log(counter);
        if(counter.every(checkForCondition)){
          for (var i = selected_shape.length-1; i >=0; i--) {
            for(var j=selected_shape.length-1;j>=0;j--){
@@ -70,7 +70,7 @@ var counter = [];
        }
        else{
          //Reset
-         console.log("Else!!");
+         //console.log("Else!!");
          shapeSelector()
          a=0;
          b=0;
@@ -96,8 +96,9 @@ var counter = [];
        //call new shape
      }
      colourBoard()
+     lineComplete()
 
-   },300)
+   },500)
  }
  timer()
 
@@ -169,36 +170,65 @@ function shapeSelector(){
 
 $('html').keydown(function(x){
   if(x.keyCode===39){
-    b+=1
-    $('#'+(a)+'_'+(b-1)).html(0)
-    $('#'+(a+1)+'_'+(b-1)).html(0)
-    $('#'+(a+2)+'_'+(b-1)).html(0)
+    var right = b+selected_shape.length+1
+    if(!(right>12)){
+      b+=1
+      $('#'+(a)+'_'+(b-1)).html(0)
+      $('#'+(a+1)+'_'+(b-1)).html(0)
+      $('#'+(a+2)+'_'+(b-1)).html(0)
     }
+  }
 })
 
 $('html').keydown(function(x){
   if(x.keyCode===37){
+    if(!((b-1)<0)){
     b-=1
     $('#'+(a)+'_'+(b+selected_shape.length)).html(0)
     $('#'+(a+1)+'_'+(b+selected_shape.length)).html(0)
     $('#'+(a+2)+'_'+(b+selected_shape.length)).html(0)
     }
+  }
 })
 
 
 //===================================
 //scoring
 //====================================
-// function lineComplete(){
-//   for(var i=0;i<boardArray.length;i++){
-//     for(var j=0;j<boardArray[i].length;j++){
-//       if($('#'+(i)+'_'+(j)).html()===1){
-//
-//       }
-//     }
-//
-//   }
-// }
+var score = 0
+var scoreCounter=[]
+function lineComplete(){
+  function checkForCondition(element){
+    return element===true
+  }
+
+  for(var i=0;i<boardArray.length;i++){
+    for(var j=0;j<boardArray[i].length;j++){
+      if($('#'+i+'_'+j).html()==='1'){
+        scoreCounter.push(true)
+      }
+      else{
+        scoreCounter.push(false)
+      }
+    }
+    if(scoreCounter.every(checkForCondition)){
+
+      score+=100
+      deleteRow(i)
+      $('.score').html(score)
+    }
+
+    console.log(score);
+    console.log(scoreCounter);
+        scoreCounter=[]
+  }
+}
+
+function deleteRow(index){
+  for(var i=0;i<boardArray[index].length;i++){
+    $('#'+index+'_'+i).html(0)
+  }
+}
 
 
 
