@@ -1,9 +1,9 @@
 
 //Board creation
 var boardArray=[]
-function createBoard(width, height){
-  for (var i=0;i<width;i++){
-    boardArray.push(new Array(height).fill(0))
+function createBoard(height, width){
+  for (var i=0;i<height;i++){
+    boardArray.push(new Array(width).fill(0))
   }
 }
 
@@ -62,6 +62,9 @@ var counter = [];
                $('#'+(a+i+1)+'_'+(b+j)).html(selected_shape[i][j])
                $('#'+(a+i)+'_'+(b+j)).html('0')
              }
+
+
+
            }
          }
        }
@@ -93,7 +96,8 @@ var counter = [];
        //call new shape
      }
      colourBoard()
-   },1000)
+
+   },300)
  }
  timer()
 
@@ -166,15 +170,35 @@ function shapeSelector(){
 $('html').keydown(function(x){
   if(x.keyCode===39){
     b+=1
+    $('#'+(a)+'_'+(b-1)).html(0)
+    $('#'+(a+1)+'_'+(b-1)).html(0)
+    $('#'+(a+2)+'_'+(b-1)).html(0)
     }
 })
 
 $('html').keydown(function(x){
   if(x.keyCode===37){
     b-=1
+    $('#'+(a)+'_'+(b+selected_shape.length)).html(0)
+    $('#'+(a+1)+'_'+(b+selected_shape.length)).html(0)
+    $('#'+(a+2)+'_'+(b+selected_shape.length)).html(0)
     }
 })
 
+
+//===================================
+//scoring
+//====================================
+// function lineComplete(){
+//   for(var i=0;i<boardArray.length;i++){
+//     for(var j=0;j<boardArray[i].length;j++){
+//       if($('#'+(i)+'_'+(j)).html()===1){
+//
+//       }
+//     }
+//
+//   }
+// }
 
 
 
