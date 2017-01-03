@@ -14,34 +14,37 @@ for (var i = 0; i < boardArray.length; i++) {
     $('#'+i+'_'+j).html(boardArray[i][j])
   }
 }
-console.log($('#0_0').html());
- var tshape=[[0,0,0],[1,1,1],[0,1,0]]
- console.log(tshape);
 
- function assignShape(tshape){
-   for (var i = 0; i < tshape.length; i++) {
-     for(var j=0;j<tshape[i].length;j++){
-       $('#'+i+'_'+j).html(tshape[i][j])
-     }
+
+function assignShape(selected_shape){
+ for (var i = 0; i < selected_shape.length; i++) {
+   for(var j=0;j<selected_shape[i].length;j++){
+     $('#'+i+'_'+j).html(selected_shape[i][j])
    }
  }
- assignShape(tshape)
+}
+
+shapeSelector()
+assignShape(selected_shape)
+
 var timeout;
 var a=0;
 var b=0;
 var counter = [];
+
  function timer(){
    timeout =  setInterval(function(){
      if((a+1)!==18){
-       for(var j=2;j>=0;j--){
-         var i=2;
-         console.log(($('#'+(a+i+1)+'_'+(b+j)).html()));
-         console.log(a+'+'+i)
-         console.log(b+'+'+j);
-         if((($('#'+(a+i+1)+'_'+(b+j)).html())==='1' && ($('#'+(a+i)+'_'+(b+j)).html())=== '0')
-         || (($('#'+(a+i+1)+'_'+(b+j)).html())==='0')
-          || (($('#'+(a+i+1)+'_'+(b+j)).html())==='0' && ($('#'+(a+i)+'_'+(b+j)).html())==='0')){
+       for(var j=selected_shape.length-1;j>=0;j--){
+         var i=selected_shape.length-1;
+         if(($('#'+(a+i+1)+'_'+(b+j)).html())==='0' && ($('#'+(a+i)+'_'+(b+j)).html())==='0'){
            console.log('entered');
+           counter.push(true)
+         }
+         else if((($('#'+(a+i+1)+'_'+(b+j)).html())==='1' && ($('#'+(a+i)+'_'+(b+j)).html())==='0')){
+           counter.push(true)
+         }
+         else if((($('#'+(a+i+1)+'_'+(b+j)).html())==='0')){
            counter.push(true)
          }
          else{
@@ -50,44 +53,29 @@ var counter = [];
        }
        console.log(counter);
        if(counter.every(checkForCondition)){
-         for (var i = 2; i >=0; i--) {
-           for(var j=2;j>=0;j--){
-            // if(($('#'+(a+i+1)+'_'+(b+j)).html())!=1){
-            //    $('#'+(a+i+1)+'_'+(b+j)).html(tshape[i][j])
-            //    $('#'+(a+i)+'_'+(b+j)).html('0')
-            //    if(tshape[i][j]===1){
-            //      $('#'+(a+i+1)+'_'+(b+j)).css('background','blue')
-            //    }
-             //}
+         for (var i = selected_shape.length-1; i >=0; i--) {
+           for(var j=selected_shape.length-1;j>=0;j--){
              if((($('#'+(a+i+1)+'_'+(b+j)).html())==='1')&&(($('#'+(a+i)+'_'+(b+j)).html())==='0')){
                $('#'+(a+i)+'_'+(b+j)).html('0')
              }
              else{
-               $('#'+(a+i+1)+'_'+(b+j)).html(tshape[i][j])
+               $('#'+(a+i+1)+'_'+(b+j)).html(selected_shape[i][j])
                $('#'+(a+i)+'_'+(b+j)).html('0')
              }
-             if(tshape[i][j]===1){
-                 $('#'+(a+i+1)+'_'+(b+j)).css('background','blue')
-               }
            }
          }
        }
        else{
          //Reset
          console.log("Else!!");
-         tshape=[[0,0,0],[1,1,1],[0,1,0]]
+         shapeSelector()
          a=0;
          b=0;
-         assignShape(tshape)
+         assignShape(selected_shape)
          clearInterval(timeout)
          timer()
          counter=[]
        }
-       $('#'+(a+i+1)+'_'+(b)).html(0).css('background','grey')
-       $('#'+(a+i+1)+'_'+(b+1)).html(0).css('background','grey')
-       $('#'+(a+i+1)+'_'+(b+2)).html(0).css('background','grey')
-       $('#'+(a+i+1)+'_'+(b-1)).html(0).css('background','grey')
-       $('#'+(a+i+1)+'_'+(b+3)).html(0).css('background','grey')
        a+=1;
 
        function checkForCondition(element){
@@ -95,19 +83,51 @@ var counter = [];
        }
      }
      else{
-       tshape=[[0,0,0],[1,1,1],[0,1,0]]
+       shapeSelector()
        a=0;
        b=0;
-       assignShape(tshape)
+       assignShape(selected_shape)
        clearInterval(timeout)
        counter=[]
        timer()
        //call new shape
      }
+     colourBoard()
    },1000)
  }
  timer()
 
+function colourBoard(){
+  for (var i = 0; i < boardArray.length; i++) {
+    for(var j=0;j<boardArray[i].length;j++){
+      if($('#'+(i)+'_'+(j)).html()==='1'){
+        $('#'+(i)+'_'+(j)).css('background','pink')
+      }
+      else{
+        $('#'+(i)+'_'+(j)).css('background','grey')
+      }
+    }
+  }
+}
+//====================================
+//Shapes
+//====================================
+var selected_shape
+function shapeSelector(){
+  var line_shape=[[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]]
+  var t_shape = [[0,0,0],[1,1,1],[0,1,0]]
+  var l_shape = [[1,1,1],[0,0,1],[0,0,0]]
+  var z_shape = [[1,1,0],[0,1,1],[0,0,0]]
+  var box_shape=[[1,1],[1,1]]
+  var inverse_z_shape = [[0,1,1],[1,1,0],[0,0,0]]
+  var inverse_l_shape = [[0,0,1],[1,1,1],[0,0,0]]
+
+  var rand = Math.random()*6
+  var temp = Math.round(rand)
+
+  var shapes = [line_shape, t_shape, l_shape, z_shape, box_shape, inverse_z_shape, inverse_l_shape]
+  selected_shape = shapes[temp]
+}
 
 
  //====================================
@@ -115,22 +135,22 @@ var counter = [];
 //=====================================
  $('html').keydown(function(x){
    if(x.keyCode===38){
-     tshape = rotate(tshape)
+     selected_shape = rotate(selected_shape)
    }
  })
 
- function rotate(tshape){
+ function rotate(selected_shape){
    var newArray = []
-   for(var i = 0; i < tshape.length; i++){
+   for(var i = 0; i < selected_shape.length; i++){
         newArray.push([]);
     };
 
-    for(var i = 0; i < tshape.length; i++){
-        for(var j = 0; j < tshape[i].length; j++){
-            newArray[j].push(tshape[i][j]);
+    for(var i = 0; i < selected_shape.length; i++){
+        for(var j = 0; j < selected_shape[i].length; j++){
+            newArray[j].push(selected_shape[i][j]);
         };
     };
-     for(var i = 0; i < tshape.length; i++){
+     for(var i = 0; i < selected_shape.length; i++){
        var temp=newArray[i][0]
        newArray[i][0]=newArray[i][2]
        newArray[i][2]=temp;
@@ -160,36 +180,3 @@ $('html').keydown(function(x){
 
 
 //======
-
-
-      //    ($('#'+(a+i+1)+'_'+(b+j)).html())!==1) {
-      //      counter.push(true)
-      //  }
-      //  else{
-      //    counter.push(false)
-      //  }
-
-      //  if(counter.every(checkForCondition)){
-      //    for (var i = 2; i >=0; i--) {
-      //      for(var j=2;j>=0;j--){
-      //        if(($('#'+(a+i+1)+'_'+(b+j)).html())!=1){
-      //          $('#'+(a+i+1)+'_'+(b+j)).html(tshape[i][j])
-      //          $('#'+(a+i)+'_'+(b+j)).html('0')
-      //         //  console.log(a+i);
-      //         //  console.log(b+j);
-      //          if(tshape[i][j]===1){
-      //            $('#'+(a+i+1)+'_'+(b+j)).css('background','blue')
-      //          }
-      //        }
-      //  }
-      //  for(var i=0;i<3;i++){
-      //    $('#'+a+'_'+b).html(0)
-      //    $('#'+a+'_'+b).css('background','grey')
-      //    b++
-      //  }
-      //  a+=2
-      //  b-=3}
-
-
-
-      // (($('#'+(a+i+1)+'_'+(b+j)).html())===1 && ($('#'+(a+i)+'_'+(b+j)).html())=== 0) ||
