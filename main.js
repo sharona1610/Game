@@ -302,9 +302,14 @@ function lineComplete(){
 }
 
 function deleteRow(index){
-  for(var i=0;i<boardArray[index].length;i++){
-    $('#'+index+'_'+i).html(0)
+  console.log(index);
+  for(var i=index;i>0;i--){
+    for(var j=0;j<boardArray[0].length;j++){
+      $('#'+i+'_'+j).html($('#'+(i-1)+'_'+j).html())
+    }
   }
+shapeSelector()
+assignShape(selected_shape)
 }
 
 
