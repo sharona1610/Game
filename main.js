@@ -1,5 +1,12 @@
 var indexOfShape=0
+var timeout=0;
+var a=0;
+var b=0;
+var counter = [];
+
+//============================
 //Board creation
+//============================
 var boardArray=[]
 function createBoard(height, width){
   for (var i=0;i<height;i++){
@@ -15,10 +22,13 @@ for (var i = 0; i < boardArray.length; i++) {
   }
 }
 
+//==============================
+//Making and assigning shapes
+//=================================
 
 function assignShape(selected_shape){
-  console.log('Assign shape - selected shape : ',selected_shape);
-  console.log('length of selected shape ',selected_shape.length);
+  //console.log('Assign shape - selected shape : ',selected_shape);
+  //console.log('length of selected shape ',selected_shape.length);
   var length= selected_shape.length;
  for (var i = 0; i <length; i++) {
    for(var j=0;j<selected_shape[i].length;j++){
@@ -27,20 +37,51 @@ function assignShape(selected_shape){
  }
 }
 
+
+//====================================
+//Shapes
+//====================================
+var selected_shape
+
+function shapeSelector(){
+  var line_shape=[[1,1,1,1]]
+  var t_shape = [[1,1,1],[0,1,0]]
+  var l_shape = [[1,1,1],[0,0,1]]
+  var z_shape = [[1,1,0],[0,1,1]]
+  var box_shape=[[1,1],[1,1]]
+  var inverse_z_shape = [[0,1,1],[1,1,0]]
+  var inverse_l_shape = [[0,0,1],[1,1,1]]
+
+  // var line_shape=[[[1,1,1,1]],[[1],[1],[1],[1]]]
+  // var t_shape = [[[1,1,1],[0,1,0]],[[0,1],[1,1],[0,1]],[[0,1,0],[1,1,1]],[[1,0],[1,1],[1,0]]]
+  // var l_shape = [[[1,1,1],[0,0,1]],[[0,1],[0,1],[1,1]],[[0,0,1],[1,1,1]],[[1,1],[1,0],[1,0]]]
+  // var z_shape = [[[1,1,0],[0,1,1]],[[0,1],[1,1],[1,0]]]
+  // var box_shape=[[[1,1],[1,1]]]
+  // var inverse_z_shape = [[[0,1,1],[1,1,0]],[[1,0],[1,1],[0,1]]]
+  // var inverse_l_shape = [[[0,0,1],[1,1,1]],[[1,0],[1,0],[1,1]],[[1,1,1],[1,0,0]],[[1,1],[0,1],[0,1]]]
+
+  var rand = Math.random()*6
+  var temp = Math.round(rand)
+
+  var shapes = [line_shape, t_shape, l_shape, z_shape, box_shape, inverse_z_shape, inverse_l_shape]
+  selected_shape = shapes[temp]
+  //selected_shape=line_shape
+}
+
+
 shapeSelector()
 assignShape(selected_shape)
 
-var timeout;
-var a=0;
-var b=0;
-var counter = [];
+//============================
+//timer
+//==============================
 
  function timer(){
    timeout =  setInterval(function(){
 
-     if(!((a+selected_shape[indexOfShape].length)>20)){
-       console.log('timer function - selected shape : '+selected_shape);
-       console.log('length of selected shape '+selected_shape.length);
+     if(!((a+selected_shape.length)>20)){
+       //console.log('timer function - selected shape : '+selected_shape);
+       //console.log('length of selected shape '+selected_shape.length);
        for(var j=selected_shape[0].length-1;j>=0;j--){
          var i=selected_shape.length-1;
         //  if(($('#'+(a+i+1)+'_'+(b+j)).html())==='0' && ($('#'+(a+i)+'_'+(b+j)).html())==='0'){
@@ -76,8 +117,11 @@ var counter = [];
        }
        else{
          //Reset
-         console.log("Else!!");
+         //console.log("Else!!");
          //indexOfShape=0
+         console.log(a);
+         if(a!=1){
+           console.log('not going to else');
          shapeSelector()
          a=0;
          b=0;
@@ -87,6 +131,12 @@ var counter = [];
          timer()
          counter=[]
        }
+       else{
+         clearInterval(timeout)
+         //console.log('gameover');
+         $('.score').html('Game over')
+       }
+       }
        a+=1;
 
        function checkForCondition(element){
@@ -95,19 +145,28 @@ var counter = [];
      }
      else{
        //indexOfShape=0
-       shapeSelector()
-       a=0;
-       b=0;
-       assignShape(selected_shape)
+       console.log(a);
+       if(!(a===1)){
+         shapeSelector()
+         a=0;
+         b=0;
+
+         assignShape(selected_shape)
+         clearInterval(timeout)
+         timer()
+         counter=[]
+     }
+     else{
+
        clearInterval(timeout)
-       counter=[]
-       timer()
+       $('.score').html('Game over')
+     }
        //call new shape
      }
      colourBoard()
      lineComplete()
 
-   },500)
+   },300)
  }
  timer()
 
@@ -122,34 +181,6 @@ function colourBoard(){
       }
     }
   }
-}
-//====================================
-//Shapes
-//====================================
-var selected_shape
-
-function shapeSelector(){
-  var line_shape=[[1,1,1,1]]
-  var t_shape = [[1,1,1],[0,1,0]]
-  var l_shape = [[1,1,1],[0,0,1]]
-  var z_shape = [[1,1,0],[0,1,1]]
-  var box_shape=[[1,1],[1,1]]
-  var inverse_z_shape = [[0,1,1],[1,1,0]]
-  var inverse_l_shape = [[0,0,1],[1,1,1]]
-
-  // var line_shape=[[[1,1,1,1]],[[1],[1],[1],[1]]]
-  // var t_shape = [[[1,1,1],[0,1,0]],[[0,1],[1,1],[0,1]],[[0,1,0],[1,1,1]],[[1,0],[1,1],[1,0]]]
-  // var l_shape = [[[1,1,1],[0,0,1]],[[0,1],[0,1],[1,1]],[[0,0,1],[1,1,1]],[[1,1],[1,0],[1,0]]]
-  // var z_shape = [[[1,1,0],[0,1,1]],[[0,1],[1,1],[1,0]]]
-  // var box_shape=[[[1,1],[1,1]]]
-  // var inverse_z_shape = [[[0,1,1],[1,1,0]],[[1,0],[1,1],[0,1]]]
-  // var inverse_l_shape = [[[0,0,1],[1,1,1]],[[1,0],[1,0],[1,1]],[[1,1,1],[1,0,0]],[[1,1],[0,1],[0,1]]]
-
-  var rand = Math.random()*6
-  var temp = Math.round(rand)
-
-  var shapes = [line_shape, t_shape, l_shape, z_shape, box_shape, inverse_z_shape, inverse_l_shape]
-  selected_shape = shapes[temp]
 }
 
 
@@ -247,13 +278,32 @@ function shapeSelector(){
 
 $('html').keydown(function(x){
   if(x.keyCode===39){
-    var right = b+selected_shape[0].length+1
-    if(!(right>12)){
-      b+=1
-      $('#'+(a)+'_'+(b-1)).html(0)
-      $('#'+(a+1)+'_'+(b-1)).html(0)
-      $('#'+(a+2)+'_'+(b-1)).html(0)
+    var right = b+selected_shape[0].length
+    var collisionCounter=[]
+    function checkForCondition(element){
+      return element===true
     }
+    for(var i=0;i<selected_shape.length;i++){
+      if($('#'+(a+i)+'_'+(b+selected_shape[0].length)).html()==='1'){
+        collisionCounter.push(false)
+      }
+      else{
+        collisionCounter.push(true)
+      }
+    }
+    //console.log(collisionCounter);
+    if(!(right>11)){
+      //console.log('entered');
+      if(collisionCounter.every(checkForCondition)){
+      b+=1
+      for(var i=0;i<selected_shape.length;i++){
+        $('#'+(a+i)+'_'+(b-1)).html(0)
+      }
+      // $('#'+(a)+'_'+(b-1)).html(0)
+      // $('#'+(a+1)+'_'+(b-1)).html(0)
+      // $('#'+(a+2)+'_'+(b-1)).html(0)
+    }
+  }
   }
 })
 
@@ -261,9 +311,12 @@ $('html').keydown(function(x){
   if(x.keyCode===37){
     if(!((b-1)<0)){
     b-=1
-    $('#'+(a)+'_'+(b+selected_shape[0].length)).html(0)
-    $('#'+(a+1)+'_'+(b+selected_shape[0].length)).html(0)
-    $('#'+(a+2)+'_'+(b+selected_shape[0].length)).html(0)
+    for(var i=0;i<selected_shape.length;i++){
+      $('#'+(a+i)+'_'+(b+selected_shape[0].length)).html(0)
+    }
+    // $('#'+(a)+'_'+(b+selected_shape[0].length)).html(0)
+    // $('#'+(a+1)+'_'+(b+selected_shape[0].length)).html(0)
+    // $('#'+(a+2)+'_'+(b+selected_shape[0].length)).html(0)
     }
   }
 })
@@ -302,7 +355,7 @@ function lineComplete(){
 }
 
 function deleteRow(index){
-  console.log(index);
+  //console.log(index);
   for(var i=index;i>0;i--){
     for(var j=0;j<boardArray[0].length;j++){
       $('#'+i+'_'+j).html($('#'+(i-1)+'_'+j).html())
