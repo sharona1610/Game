@@ -3,6 +3,9 @@ var timeout=0;
 var a=0;
 var b=0;
 var counter = [];
+var back = new Audio('back-music.wav')
+// back.play()
+// back.volume = 0.05
 
 //============================
 //Board creation
@@ -112,6 +115,7 @@ assignShape(selected_shape)
 
 
 
+
            }
          }
        }
@@ -174,10 +178,13 @@ function colourBoard(){
   for (var i = 0; i < boardArray.length; i++) {
     for(var j=0;j<boardArray[i].length;j++){
       if($('#'+(i)+'_'+(j)).html()==='1'){
-        $('#'+(i)+'_'+(j)).css('background','pink')
+        var color = ['#ff0099', '#f3f315', '#83f52c', '#ff6600', '#6e0dd0']
+        var rand = Math.random()*4
+        var temp = Math.round(rand)
+        $('#'+(i)+'_'+(j)).css('background',color[temp])
       }
       else{
-        $('#'+(i)+'_'+(j)).css('background','grey')
+        $('#'+(i)+'_'+(j)).css('background','rgba(0,0,0,0.5 )')
       }
     }
   }
@@ -234,6 +241,8 @@ function colourBoard(){
 
  function rotate(selected_shape){
    var newArray = []
+   var fallSound = new Audio('boing.wav')
+   fallSound.play()
 
    for(var i = 0; i < selected_shape[0].length; i++){
         newArray.push([]);
@@ -344,6 +353,14 @@ function lineComplete(){
     if(scoreCounter.every(checkForCondition)){
 
       score+=100
+      var progressTimer = setInterval(function(){
+        var curVal = document.getElementById('progress').value
+        document.getElementById('progress').value=curVal+2
+        if((curVal+2)===score){
+          clearInterval(progressTimer)
+        }
+      },100)
+      //document.getElementById('progress').value=score
       deleteRow(i)
       $('.score').html(score)
     }
