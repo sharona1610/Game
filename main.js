@@ -1,12 +1,20 @@
 var indexOfShape=0
 var timeout=0;
 var a=0;
-var b=0;
+var b=5;
+var selected_shape
 var counter = [];
 var back = new Audio('back-music.wav')
-// back.play()
-// back.volume = 0.05
+var level=1
+var speed=500
+var prev_score = 0;
+back.play()
+back.volume = 0.05
+back.loop = true;
 
+function checkForCondition(element){
+  return element===true
+}
 //============================
 //Board creation
 //============================
@@ -16,7 +24,6 @@ function createBoard(height, width){
     boardArray.push(new Array(width).fill(0))
   }
 }
-
 createBoard(20,12)
 
 for (var i = 0; i < boardArray.length; i++) {
@@ -30,21 +37,15 @@ for (var i = 0; i < boardArray.length; i++) {
 //=================================
 
 function assignShape(selected_shape){
-  //console.log('Assign shape - selected shape : ',selected_shape);
-  //console.log('length of selected shape ',selected_shape.length);
+  var newSound = new Audio('fall.wav')
+  newSound.play()
   var length= selected_shape.length;
- for (var i = 0; i <length; i++) {
-   for(var j=0;j<selected_shape[i].length;j++){
+  for (var i = 0; i <length; i++) {
+   for(var j=5;j<selected_shape[i].length;j++){
      $('#'+i+'_'+j).html(selected_shape[i][j])
    }
- }
+  }
 }
-
-
-//====================================
-//Shapes
-//====================================
-var selected_shape
 
 function shapeSelector(){
   var line_shape=[[1,1,1,1]]
@@ -55,22 +56,10 @@ function shapeSelector(){
   var inverse_z_shape = [[0,1,1],[1,1,0]]
   var inverse_l_shape = [[0,0,1],[1,1,1]]
 
-  // var line_shape=[[[1,1,1,1]],[[1],[1],[1],[1]]]
-  // var t_shape = [[[1,1,1],[0,1,0]],[[0,1],[1,1],[0,1]],[[0,1,0],[1,1,1]],[[1,0],[1,1],[1,0]]]
-  // var l_shape = [[[1,1,1],[0,0,1]],[[0,1],[0,1],[1,1]],[[0,0,1],[1,1,1]],[[1,1],[1,0],[1,0]]]
-  // var z_shape = [[[1,1,0],[0,1,1]],[[0,1],[1,1],[1,0]]]
-  // var box_shape=[[[1,1],[1,1]]]
-  // var inverse_z_shape = [[[0,1,1],[1,1,0]],[[1,0],[1,1],[0,1]]]
-  // var inverse_l_shape = [[[0,0,1],[1,1,1]],[[1,0],[1,0],[1,1]],[[1,1,1],[1,0,0]],[[1,1],[0,1],[0,1]]]
-
-  var rand = Math.random()*6
-  var temp = Math.round(rand)
-
+  var temp = Math.round(Math.random()*6)
   var shapes = [line_shape, t_shape, l_shape, z_shape, box_shape, inverse_z_shape, inverse_l_shape]
   selected_shape = shapes[temp]
-  //selected_shape=line_shape
 }
-
 
 shapeSelector()
 assignShape(selected_shape)
@@ -81,55 +70,61 @@ assignShape(selected_shape)
 
  function timer(){
    timeout =  setInterval(function(){
-
      if(!((a+selected_shape.length)>20)){
-       //console.log('timer function - selected shape : '+selected_shape);
-       //console.log('length of selected shape '+selected_shape.length);
        for(var j=selected_shape[0].length-1;j>=0;j--){
          var i=selected_shape.length-1;
-        //  if(($('#'+(a+i+1)+'_'+(b+j)).html())==='0' && ($('#'+(a+i)+'_'+(b+j)).html())==='0'){
-        //    //console.log('entered');
-        //    counter.push(true)
-         //}
          if((($('#'+(a+i+1)+'_'+(b+j)).html())==='1' && ($('#'+(a+i)+'_'+(b+j)).html())==='0')){
            counter.push(true)
          }
          else if((($('#'+(a+i+1)+'_'+(b+j)).html())==='0')){
            counter.push(true)
          }
+         else if((($('#'+(a+i+1)+'_'+(b+j)).html())==='1' && ($('#'+(a+i)+'_'+(b+j)).html())==='1')&&selected_shape[selected_shape.length-1][j]==='0'){
+           console.log('l shape');
+           counter.push(true)
+         }
          else{
            counter.push(false)
          }
        }
-       //console.log(counter);
        if(counter.every(checkForCondition)){
          for (var i = selected_shape.length-1; i >=0; i--) {
            for(var j=selected_shape[0].length-1;j>=0;j--){
-             if((($('#'+(a+i+1)+'_'+(b+j)).html())==='1')&&(($('#'+(a+i)+'_'+(b+j)).html())==='0')){
-               $('#'+(a+i)+'_'+(b+j)).html('0')
-             }
-             else{
+             if(!((($('#'+(a+i+1)+'_'+(b+j)).html())==='1')&&(($('#'+(a+i)+'_'+(b+j)).html())==='0'))){
                $('#'+(a+i+1)+'_'+(b+j)).html(selected_shape[i][j])
                $('#'+(a+i)+'_'+(b+j)).html('0')
              }
-
-
-
-
            }
          }
        }
        else{
-         //Reset
-         //console.log("Else!!");
-         //indexOfShape=0
-         console.log(a);
          if(a!=1){
-           console.log('not going to else');
          shapeSelector()
          a=0;
-         b=0;
-
+         b=5;
+         assignShape(selected_shape)
+         clearInterval(timeout)
+         timer()
+         counter=[]
+        }
+        else{
+         clearInterval(timeout)
+         $('.score').html('Game over')
+         var gameOver = new Audio('over.wav')
+         gameOver.play()
+         back.pause()
+        }
+       }
+       a+=1;
+       for(var j=0;j<boardArray.length;j++){
+         $('#'+(0)+'_'+(j)).html('0')
+       }
+     }
+     else{
+       if(!(a===1)){
+         shapeSelector()
+         a=0;
+         b=5;
          assignShape(selected_shape)
          clearInterval(timeout)
          timer()
@@ -137,42 +132,22 @@ assignShape(selected_shape)
        }
        else{
          clearInterval(timeout)
-         //console.log('gameover');
          $('.score').html('Game over')
+         var gameOver = new Audio('over.wav')
+         gameOver.play()
+         back.pause()
        }
-       }
-       a+=1;
-
-       function checkForCondition(element){
-         return element===true
-       }
-     }
-     else{
-       //indexOfShape=0
-       console.log(a);
-       if(!(a===1)){
-         shapeSelector()
-         a=0;
-         b=0;
-
-         assignShape(selected_shape)
-         clearInterval(timeout)
-         timer()
-         counter=[]
-     }
-     else{
-
-       clearInterval(timeout)
-       $('.score').html('Game over')
-     }
-       //call new shape
      }
      colourBoard()
      lineComplete()
-
-   },300)
+   },speed)
  }
+
  timer()
+
+//======================
+//Colour boardArray
+//===================
 
 function colourBoard(){
   for (var i = 0; i < boardArray.length; i++) {
@@ -196,10 +171,6 @@ function colourBoard(){
 //=====================================
  $('html').keydown(function(x){
    if(x.keyCode===38){
-    //  console.log(selected_shape);
-    //  console.log(selected_shape[indexOfShape]);
-    //  console.log(selected_shape[indexOfShape].length);
-    //  console.log('index of shape' +indexOfShape);
      selected_shape= rotate(selected_shape)
    }
  })
@@ -241,31 +212,39 @@ function colourBoard(){
 
  function rotate(selected_shape){
    var newArray = []
+   var collisionCounter=[]
    var fallSound = new Audio('boing.wav')
    fallSound.play()
-
    for(var i = 0; i < selected_shape[0].length; i++){
         newArray.push([]);
     };
-
     for(var i = 0; i < selected_shape.length; i++){
         for(var j = 0; j < selected_shape[i].length; j++){
             newArray[j].push(selected_shape[i][j]);
         };
     };
-    //  for(var i = 0; i < selected_shape[0].length; i++){
-    //    var temp=newArray[i][0]
-    //    newArray[i][0]=newArray[i][2]
-    //    newArray[i][2]=temp;
-    //  };
-     for(var i = 0; i < newArray.length; i++){
-       newArray[i].reverse()
-     };
-     if(selected_shape.length>newArray.length){
-       var diff=selected_shape.length-newArray.length
+    for(var i = 0; i < newArray.length; i++){
+     newArray[i].reverse()
+    };
+   if(selected_shape.length>newArray.length){
+     var diff=selected_shape.length-newArray.length
+     for(var i=1;i<=diff;i++){
+       for(var j=0;j<selected_shape[0].length;j++){
+         $('#'+(a+newArray.length-1+i)+'_'+(b+j)).html(0)
+       }
+     }
+   }
+   else if(newArray.length>selected_shape.length){
+       var diff=newArray.length-selected_shape.length
        for(var i=1;i<=diff;i++){
-         for(var j=0;j<selected_shape[0].length;j++){
-           $('#'+(a+newArray.length-1+i)+'_'+(b+j)).html(0)
+         for(var j=0;j<newArray[0].length;j++){
+           if($('#'+(a+selected_shape.length-1+i)+'_'+(b+j))==='1'){
+             console.log("collision");
+             collisionCounter.push(false)
+           }
+           else{
+             collisionCounter.push(true)
+           }
          }
        }
      }
@@ -277,8 +256,26 @@ function colourBoard(){
          }
        }
      }
-
-    return(newArray);
+     else if(newArray[0].length>selected_shape[0].length){
+       var diff=newArray[0].length-selected_shape[0].length
+       for(var i=0;i<newArray.length;i++){
+         for(var j=1;j<=diff;j++){
+           if($('#'+(a+i)+'_'+(b+selected_shape[0].length-1+j))==='1'){
+             console.log('collision');
+             collisionCounter.push(false)
+           }
+           else{
+             collisionCounter.push(true)
+           }
+         }
+       }
+     }
+     if(collisionCounter.every(checkForCondition)){
+      return newArray
+     }
+     else{
+       return selected_shape
+     }
 }
 
 //=================================
@@ -289,9 +286,6 @@ $('html').keydown(function(x){
   if(x.keyCode===39){
     var right = b+selected_shape[0].length
     var collisionCounter=[]
-    function checkForCondition(element){
-      return element===true
-    }
     for(var i=0;i<selected_shape.length;i++){
       if($('#'+(a+i)+'_'+(b+selected_shape[0].length)).html()==='1'){
         collisionCounter.push(false)
@@ -300,32 +294,35 @@ $('html').keydown(function(x){
         collisionCounter.push(true)
       }
     }
-    //console.log(collisionCounter);
     if(!(right>11)){
-      //console.log('entered');
       if(collisionCounter.every(checkForCondition)){
-      b+=1
-      for(var i=0;i<selected_shape.length;i++){
+        b+=1
+        for(var i=0;i<selected_shape.length;i++){
         $('#'+(a+i)+'_'+(b-1)).html(0)
+        }
       }
-      // $('#'+(a)+'_'+(b-1)).html(0)
-      // $('#'+(a+1)+'_'+(b-1)).html(0)
-      // $('#'+(a+2)+'_'+(b-1)).html(0)
     }
-  }
   }
 })
 
 $('html').keydown(function(x){
   if(x.keyCode===37){
-    if(!((b-1)<0)){
-    b-=1
+    var collisionCounter=[]
     for(var i=0;i<selected_shape.length;i++){
-      $('#'+(a+i)+'_'+(b+selected_shape[0].length)).html(0)
+      if($('#'+(a+i)+'_'+(b-1)).html()==='1'){
+        collisionCounter.push(false)
+      }
+      else{
+        collisionCounter.push(true)
+      }
     }
-    // $('#'+(a)+'_'+(b+selected_shape[0].length)).html(0)
-    // $('#'+(a+1)+'_'+(b+selected_shape[0].length)).html(0)
-    // $('#'+(a+2)+'_'+(b+selected_shape[0].length)).html(0)
+    if(!((b-1)<0)){
+      if(collisionCounter.every(checkForCondition)){
+        b-=1
+        for(var i=0;i<selected_shape.length;i++){
+          $('#'+(a+i)+'_'+(b+selected_shape[0].length)).html(0)
+        }
+      }
     }
   }
 })
@@ -337,10 +334,6 @@ $('html').keydown(function(x){
 var score = 0
 var scoreCounter=[]
 function lineComplete(){
-  function checkForCondition(element){
-    return element===true
-  }
-
   for(var i=0;i<boardArray.length;i++){
     for(var j=0;j<boardArray[i].length;j++){
       if($('#'+i+'_'+j).html()==='1'){
@@ -350,29 +343,37 @@ function lineComplete(){
         scoreCounter.push(false)
       }
     }
-    if(scoreCounter.every(checkForCondition)){
 
+    if(scoreCounter.every(checkForCondition)){
       score+=100
+      var clearSound = new Audio('clear1.wav')
+      clearSound.play()
+      var x=0;
       var progressTimer = setInterval(function(){
         var curVal = document.getElementById('progress').value
         document.getElementById('progress').value=curVal+2
-        if((curVal+2)===score){
+        if(++x===50){
           clearInterval(progressTimer)
+          x=0;
+          if(score-prev_score===200){
+            document.getElementById('progress').value=0
+            prev_score=score
+          }
         }
       },100)
-      //document.getElementById('progress').value=score
+      if(score-prev_score===200){
+        level++
+        $('.level').html(level)
+        speed-=100;
+      }
       deleteRow(i)
       $('.score').html(score)
     }
-
-  //  console.log(score);
-  //  console.log(scoreCounter);
-        scoreCounter=[]
+    scoreCounter=[]
   }
 }
 
 function deleteRow(index){
-  //console.log(index);
   for(var i=index;i>0;i--){
     for(var j=0;j<boardArray[0].length;j++){
       $('#'+i+'_'+j).html($('#'+(i-1)+'_'+j).html())
@@ -381,8 +382,5 @@ function deleteRow(index){
 shapeSelector()
 assignShape(selected_shape)
 }
-
-
-
 
 //======

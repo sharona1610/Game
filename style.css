@@ -138,3 +138,6 @@ background-size: 700px 800px;
     text-align: center;
     padding: 10px 20px;
   }
+  .row1{
+    display: none;
+  }
