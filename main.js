@@ -74,16 +74,19 @@ assignShape(selected_shape)
        for(var j=selected_shape[0].length-1;j>=0;j--){
          var i=selected_shape.length-1;
          if((($('#'+(a+i+1)+'_'+(b+j)).html())==='1' && ($('#'+(a+i)+'_'+(b+j)).html())==='0')){
+           console.log('first');
            counter.push(true)
          }
          else if((($('#'+(a+i+1)+'_'+(b+j)).html())==='0')){
+           console.log('second');
            counter.push(true)
          }
-         else if((($('#'+(a+i+1)+'_'+(b+j)).html())==='1' && ($('#'+(a+i)+'_'+(b+j)).html())==='1')&&selected_shape[selected_shape.length-1][j]==='0'){
+         else if((($('#'+(a+i+1)+'_'+(b+j)).html())==='1') && (($('#'+(a+i)+'_'+(b+j)).html())==='1') && (selected_shape[selected_shape.length-1][j]==='0')){
            console.log('l shape');
            counter.push(true)
          }
          else{
+           console.log('false');
            counter.push(false)
          }
        }
